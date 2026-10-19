@@ -107,17 +107,27 @@ void preferences_dialog::set_resolution_list(menu_button& res_list)
 {
 	resolutions_ = video::get_available_resolutions(true);
 
+	// The current resolution may not be in the available list, for example if
+	// the logical window size differs from the saved preference. Add it so
+	// that the selection passed to set_values() is always valid.
+	const point current_resolution = video::current_resolution();
+	if(std::find(resolutions_.begin(), resolutions_.end(), current_resolution) == resolutions_.end()) {
+		resolutions_.push_back(current_resolution);
+	}
+
 	std::vector<config> options;
 	for(const point& res : resolutions_) {
 		config option;
 		option["label"] = formatter() << res.x << font::unicode_multiplication_sign << res.y;
 
 		const int div = std::gcd(res.x, res.y);
-		const int x_ratio = res.x / div;
-		const int y_ratio = res.y / div;
+		if(div > 0) {
+			const int x_ratio = res.x / div;
+			const int y_ratio = res.y / div;
 
-		if(x_ratio <= 10 || y_ratio <= 10) {
-			option["details"] = markup::span_color("#777777", "(", x_ratio, ':', y_ratio, ")");
+			if(x_ratio <= 10 || y_ratio <= 10) {
+				option["details"] = markup::span_color("#777777", "(", x_ratio, ':', y_ratio, ")");
+			}
 		}
 
 		options.push_back(std::move(option));

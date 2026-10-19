@@ -767,7 +767,10 @@ std::vector<point> get_available_resolutions(const bool include_current)
 	std::vector<point> result;
 
 #ifdef __ANDROID__
-	result.push_back(prefs::get().resolution());
+	// The logical window size is adjusted for the current pixel scale, so it
+	// can differ from the saved preference. Report the actual size here, as
+	// the preferences dialog looks for the current resolution in this list.
+	result.push_back(window ? current_resolution() : prefs::get().resolution());
 	return result;
 #endif
 
