@@ -107,3 +107,4 @@ jobs:
         with:
           name: "wesnoth.aab"
           path: "packaging/android/app/build/outputs/bundle/${{ env.BUILDTYPE }}/app-${{ env.BUILDTYPE }}.aab"
+# trigger registration
